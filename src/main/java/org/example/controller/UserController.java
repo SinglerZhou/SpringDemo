@@ -35,4 +35,13 @@ public class UserController {
     public Result login(@RequestBody LoginRequest loginRequest) {
         return userService.login(loginRequest);
     }
+
+    /**
+     * 获取所有用户列表（用于调试）
+     * GET /api/user/list
+     */
+    @GetMapping("/list")
+    public Result getAllUsers() {
+        return userService.getAllUsers();
+    }
 }

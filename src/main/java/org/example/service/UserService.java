@@ -32,13 +32,12 @@ public class UserService {
 
         // 创建新用户
         User user = new User();
-        user.setId(UUID.randomUUID().toString());
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword()); // 实际项目中应该对密码进行加密
         user.setPhone(registerRequest.getPhone());
 
-        // 保存用户到数据库
+        // 保存用户到数据库（ID由JPA自动生成）
         userRepository.save(user);
 
         return Result.success(user);
@@ -74,5 +73,13 @@ public class UserService {
      */
     public User getUserById(String userId) {
         return userRepository.findById(userId).orElse(null);
+    }
+
+    /**
+     * 获取所有用户列表
+     * @return 用户列表
+     */
+    public Result getAllUsers() {
+        return Result.success(userRepository.findAll());
     }
 }
