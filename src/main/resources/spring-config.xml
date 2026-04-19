@@ -11,10 +11,8 @@
            http://www.springframework.org/schema/mvc
            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!-- 启用注解驱动 -->
     <mvc:annotation-driven />
 
-    <!-- 启用组件扫描，扫描org.example包下的所有组件 -->
     <context:component-scan base-package="org.example"/>
 
 </beans>
