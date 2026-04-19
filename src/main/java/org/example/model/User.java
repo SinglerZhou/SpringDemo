@@ -1,15 +1,31 @@
 package org.example.model;
 
+import javax.persistence.*;
+
 /**
  * 用户实体类
  */
+@Entity
+@Table(name = "users")
 public class User {
-    private String name;
-    private String email;
-    private String password;
-    private String phone;
-    private String address;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
+
+    @Column(nullable = false, length = 50)
+    private String name;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
+    @Column(nullable = false, length = 255)
+    private String password;
+
+    @Column(length = 20)
+    private String phone;
+
+    @Column(length = 255)
+    private String address;
 
     public void print() {
         System.out.println("Name: " + name);

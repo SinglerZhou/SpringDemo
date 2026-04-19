@@ -4,10 +4,10 @@ import org.example.common.Result;
 import org.example.dto.LoginRequest;
 import org.example.dto.RegisterRequest;
 import org.example.model.User;
+import org.example.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -15,10 +15,9 @@ import java.util.UUID;
  */
 @Service
 public class UserService {
-    // 使用Map模拟数据库存储用户信息
-    private Map<String, User> users = new HashMap<>();
-    // 使用Map存储邮箱与用户ID的映射，便于通过邮箱查找用户
-    private Map<String, String> emailToUserId = new HashMap<>();
+    
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * 用户注册
@@ -27,7 +26,7 @@ public class UserService {
      */
     public Result register(RegisterRequest registerRequest) {
         // 检查邮箱是否已存在
-        if (emailToUserId.containsKey(registerRequest.getEmail())) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             return Result.error("邮箱已被注册");
         }
 
@@ -39,9 +38,8 @@ public class UserService {
         user.setPassword(registerRequest.getPassword()); // 实际项目中应该对密码进行加密
         user.setPhone(registerRequest.getPhone());
 
-        // 保存用户
-        users.put(user.getId(), user);
-        emailToUserId.put(user.getEmail(), user.getId());
+        // 保存用户到数据库
+        userRepository.save(user);
 
         return Result.success(user);
     }
@@ -53,12 +51,13 @@ public class UserService {
      */
     public Result login(LoginRequest loginRequest) {
         // 根据邮箱查找用户
-        String userId = emailToUserId.get(loginRequest.getEmail());
-        if (userId == null) {
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElse(null);
+        
+        if (user == null) {
             return Result.error("用户不存在");
         }
 
-        User user = users.get(userId);
         // 验证密码（实际项目中应该使用加密后的密码进行比较）
         if (!user.getPassword().equals(loginRequest.getPassword())) {
             return Result.error("密码错误");
@@ -74,6 +73,6 @@ public class UserService {
      * @return 用户信息
      */
     public User getUserById(String userId) {
-        return users.get(userId);
+        return userRepository.findById(userId).orElse(null);
     }
 }
